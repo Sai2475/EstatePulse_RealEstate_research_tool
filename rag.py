@@ -20,7 +20,11 @@ except ImportError:
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.retrievers import BaseRetriever
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+try:
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+except (ImportError, ModuleNotFoundError):
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
