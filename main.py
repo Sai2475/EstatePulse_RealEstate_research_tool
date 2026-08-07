@@ -210,7 +210,7 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("#### ⚙️ Pipeline Specs")
     st.caption("**LLM**: Groq Llama-3.3-70B-Versatile")
-    st.caption("**Embeddings**: Alibaba-NLP/gte-base-en-v1.5")
+    st.caption("**Embeddings**: BAAI/bge-small-en-v1.5")
     st.caption("**Vector DB**: ChromaDB")
 
 

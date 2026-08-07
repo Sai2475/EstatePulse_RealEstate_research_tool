@@ -36,15 +36,12 @@ from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 100
 
-EMBEDDING_MODEL = "Alibaba-NLP/gte-base-en-v1.5"
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
 COLLECTION_NAME = "real_estate"
 VECTORSTORE_DIR = Path(__file__).parent / "resources/vectorstore"
 
 # Load tokenizer only once
-tokenizer = AutoTokenizer.from_pretrained(
-    EMBEDDING_MODEL,
-    trust_remote_code=True
-)
+tokenizer = AutoTokenizer.from_pretrained(EMBEDDING_MODEL)
 
 llm = None
 vector_store = None
@@ -66,7 +63,7 @@ def initialize_components():
         embeddings = HuggingFaceEmbeddings(
             model_name=EMBEDDING_MODEL,
             model_kwargs={
-                "trust_remote_code": True,
+                "device": "cpu",
             },
             encode_kwargs={
                 "normalize_embeddings": True,
