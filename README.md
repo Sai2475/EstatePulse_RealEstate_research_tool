@@ -4,6 +4,8 @@
 
 ---
 
+**DEMO** : https://estate-pulse-research-tool.streamlit.app/
+
 ## ✨ Features
 
 - **🏢 Dynamic Source Ingestion**: Easily paste article URLs (CNBC, Bloomberg, Zillow, financial news, etc.) to index into Chroma Vector Store.
