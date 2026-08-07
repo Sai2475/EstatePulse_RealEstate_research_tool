@@ -73,12 +73,6 @@ def initialize_components():
             },
         )
 
-        # Limit maximum sequence length
-        try:
-            embeddings.client.max_seq_length = 512
-        except AttributeError:
-            pass
-
         vector_store = Chroma(
             collection_name=COLLECTION_NAME,
             embedding_function=embeddings,
