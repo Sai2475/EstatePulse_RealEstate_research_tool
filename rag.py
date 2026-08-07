@@ -5,9 +5,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from transformers import AutoTokenizer
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
+
+try:
+    from langchain.chains.retrieval import create_retrieval_chain
+    from langchain.chains.combine_documents.stuff import create_stuff_documents_chain
+except ImportError:
+    try:
+        from langchain.chains import create_retrieval_chain
+        from langchain.chains.combine_documents import create_stuff_documents_chain
+    except ImportError:
+        create_retrieval_chain = None
+        create_stuff_documents_chain = None
+
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.retrievers import BaseRetriever
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_chroma import Chroma
@@ -177,15 +189,21 @@ def generate_answer(query):
         ("human", "{input}"),
     ])
 
-    question_answer_chain = create_stuff_documents_chain(llm, prompt)
-    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
-
-    result = rag_chain.invoke({"input": query})
-
-    answer = result.get("answer", "No answer generated.")
+    if create_stuff_documents_chain and create_retrieval_chain:
+        question_answer_chain = create_stuff_documents_chain(llm, prompt)
+        rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+        result = rag_chain.invoke({"input": query})
+        answer = result.get("answer", "No answer generated.")
+        context_docs = result.get("context", [])
+    else:
+        # Fallback pure LCEL chain
+        context_docs = retriever.invoke(query)
+        formatted_context = "\n\n".join(doc.page_content for doc in context_docs)
+        chain = prompt | llm
+        response_msg = chain.invoke({"context": formatted_context, "input": query})
+        answer = response_msg.content if hasattr(response_msg, "content") else str(response_msg)
 
     # Extract unique source URLs from retrieved context documents
-    context_docs = result.get("context", [])
     sources_set = set()
     for doc in context_docs:
         source_url = doc.metadata.get("source") or doc.metadata.get("url")
