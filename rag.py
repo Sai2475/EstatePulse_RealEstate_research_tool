@@ -5,11 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from transformers import AutoTokenizer
-try:
-    from langchain.chains import RetrievalQAWithSourcesChain
-except (ImportError, ModuleNotFoundError):
-    from langchain.chains.qa_with_sources.retrieval import RetrievalQAWithSourcesChain
-
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_chroma import Chroma
@@ -166,19 +164,37 @@ def generate_answer(query):
         search_kwargs={"k": 2},
     )
 
-    chain = RetrievalQAWithSourcesChain.from_llm(
-        llm=llm,
-        retriever=retriever,
+    system_prompt = (
+        "You are an expert real estate research analyst.\n"
+        "Use the following pieces of retrieved context to answer the user's question accurately.\n"
+        "If you don't know the answer or if the context doesn't contain relevant information, state that clearly.\n"
+        "Include specific dates, rates, and numbers whenever available in the context.\n\n"
+        "Context:\n{context}"
     )
 
-    result = chain.invoke(
-        {"question": query}
-    )
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", system_prompt),
+        ("human", "{input}"),
+    ])
 
-    return (
-        result.get("answer", "No answer generated."),
-        result.get("sources", "")
-    )
+    question_answer_chain = create_stuff_documents_chain(llm, prompt)
+    rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+
+    result = rag_chain.invoke({"input": query})
+
+    answer = result.get("answer", "No answer generated.")
+
+    # Extract unique source URLs from retrieved context documents
+    context_docs = result.get("context", [])
+    sources_set = set()
+    for doc in context_docs:
+        source_url = doc.metadata.get("source") or doc.metadata.get("url")
+        if source_url:
+            sources_set.add(source_url)
+
+    sources_str = "\n".join(sorted(sources_set)) if sources_set else ""
+
+    return answer, sources_str
 
 
 # ---------------- MAIN ---------------- #
