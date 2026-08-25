@@ -1,7 +1,6 @@
 from uuid import uuid4
 from pathlib import Path
 from dotenv import load_dotenv
-
 load_dotenv()
 
 from transformers import AutoTokenizer
@@ -54,8 +53,8 @@ def initialize_components():
 
     if llm is None:
         llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
-            temperature=0.9,
+            model="qwen/qwen3.6-27b",
+            temperature=0.5,
             max_tokens=1024,
         )
 
