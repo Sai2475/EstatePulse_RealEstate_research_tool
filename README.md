@@ -11,7 +11,7 @@
 - **🏢 Dynamic Source Ingestion**: Easily paste article URLs (CNBC, Bloomberg, Zillow, financial news, etc.) to index into Chroma Vector Store.
 - **➕ Expandable URL Fields**: Start with a single input field and add as many dynamic URL fields as needed.
 - **🧠 Advanced RAG Architecture**:
-  - **LLM Engine**: Groq `llama-3.3-70b-versatile` for fast, accurate generation.
+  - **LLM Engine**: Groq `qwen/qwen3.6-27b` for fast, accurate generation.
   - **Embeddings**: `Alibaba-NLP/gte-base-en-v1.5` via HuggingFace for dense vector representations.
   - **Vector DB**: ChromaDB with similarity retrieval.
 - **📊 Real-time Diagnostics**: View active vector chunk counts, collection status, and system architecture specs.
