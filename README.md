@@ -1,6 +1,6 @@
 # 🏢 EstatePulse - Real Estate RAG Research Tool
 
-**EstatePulse** is an AI-powered Real Estate Analytics & Market Intelligence platform built with **LangChain**, **Groq Llama-3.3-70B**, **Chroma Vector DB**, and **Streamlit**. It enables users to dynamically ingest real estate web articles, vectorize their contents, and perform retrieval-augmented question answering (RAG) with precise source citations.
+**EstatePulse** is an AI-powered Real Estate Analytics & Market Intelligence platform built with **LangChain**, **Groq openAI model**, **Chroma Vector DB**, and **Streamlit**. It enables users to dynamically ingest real estate web articles, vectorize their contents, and perform retrieval-augmented question answering (RAG) with precise source citations.
 
 ---
 
