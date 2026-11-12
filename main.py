@@ -209,7 +209,7 @@ with st.sidebar:
     # Sidebar Footer System Info
     st.markdown("---")
     st.markdown("#### ⚙️ Pipeline Specs")
-    st.caption("**LLM**: Groq Llama-3.3-70B-Versatile")
+    st.caption("**LLM**: Groq openai/gpt-oss-20b")
     st.caption("**Embeddings**: BAAI/bge-small-en-v1.5")
     st.caption("**Vector DB**: ChromaDB")
 
@@ -261,7 +261,7 @@ with m_col3:
     st.markdown(
         """
         <div class="metric-card">
-            <div class="metric-value" style="font-size:1.2rem; margin-top:0.4rem;">Llama-3.3-70B</div>
+            <div class="metric-value" style="font-size:1.2rem; margin-top:0.4rem;">GPT-OSS 20B</div>
             <div class="metric-label">🧠 Groq LLM Engine</div>
         </div>
         """,
@@ -309,7 +309,7 @@ with tab_qa:
             st.warning("Please type a question before submitting.")
         else:
             st.session_state.last_asked_query = user_query
-            with st.spinner("Analyzing vector database and generating answer with Groq Llama 3.3..."):
+            with st.spinner("Analyzing vector database and generating answer with Groq LLM..."):
                 try:
                     answer, sources = generate_answer(user_query)
 
@@ -396,7 +396,7 @@ with tab_diag:
         st.json(
             {
                 "LLM Provider": "Groq API",
-                "LLM Model": "llama-3.3-70b-versatile",
+                "LLM Model": "openai/gpt-oss-20b",
                 "Temperature": 0.9,
                 "Max Output Tokens": 1024,
                 "Embedding Model": "Alibaba-NLP/gte-base-en-v1.5",

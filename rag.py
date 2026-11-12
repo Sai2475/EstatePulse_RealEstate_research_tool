@@ -1,7 +1,11 @@
+import os
 from uuid import uuid4
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()
+
+# Ensure .env is loaded reliably regardless of working directory
+ENV_FILE = Path(__file__).resolve().parent / ".env"
+load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 from transformers import AutoTokenizer
 
@@ -51,8 +55,21 @@ vector_store = None
 def initialize_components():
     global llm, vector_store
 
-    if llm is None:
+    load_dotenv(dotenv_path=ENV_FILE, override=True)
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
+        raise ValueError(
+            f"GROQ_API_KEY not found in environment or {ENV_FILE}. Please check your .env file."
+        )
+
+    # Re-initialize LLM if not yet created or if API key has changed
+    current_llm_key = getattr(llm, "groq_api_key", None)
+    if hasattr(current_llm_key, "get_secret_value"):
+        current_llm_key = current_llm_key.get_secret_value()
+
+    if llm is None or current_llm_key != groq_api_key:
         llm = ChatGroq(
+            groq_api_key=groq_api_key,
             model="openai/gpt-oss-20b",
             temperature=0.8,
             max_tokens=1024,
